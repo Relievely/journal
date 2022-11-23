@@ -10,3 +10,10 @@ export const parameterErrorResponse = (req: Request): ResponseObject => ({
         data: {"error": "Didn't provided necessary parameters"}
     },
 })
+
+export const databaseCreateErrorResponse = (req: Request): ResponseObject => ({
+    query: req.query,
+    params: req.params,
+    sender: "Service",
+    error: new Error("Error while creating table in database")
+})

@@ -3,10 +3,17 @@ import {Express} from "express";
 import {logger} from "./middleware/logger";
 import {progress} from "./routes/progress";
 import {note} from "./routes/note";
+import {createTablesController} from "./middleware/controller/tableController";
 import {creation} from "./routes/creation";
 
 export const routes = (app: Express) => {
-    app.use(cors)
+    app.use(cors({
+        "origin": "*",
+        "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+        "preflightContinue": false,
+        "optionsSuccessStatus": 204
+    }));
+
     app.use(creation);
     app.use("/progress", progress);
     app.use("/note", note);

@@ -13,7 +13,10 @@ describe("Creation routes", () => {
             .expect('Content-Type', /json/)
             .then((response: Response) => {
                 expect(response).toBeDefined();
-            });
+            })
+            .catch((err: Error) => {
+                expect(err).toBeDefined();
+            })
     });
 });
 
