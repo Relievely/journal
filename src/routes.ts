@@ -1,3 +1,4 @@
+import cors from "cors";
 import {Express} from "express";
 import {logger} from "./middleware/logger";
 import {progress} from "./routes/progress";
@@ -5,6 +6,7 @@ import {note} from "./routes/note";
 import {creation} from "./routes/creation";
 
 export const routes = (app: Express) => {
+    app.use(cors)
     app.use(creation);
     app.use("/progress", progress);
     app.use("/note", note);
