@@ -1,10 +1,10 @@
 import {Request} from "express";
-import {ResponseObject} from "../../../interfaces";
+import {ProgressItem, ResponseObject} from "../../../interfaces";
 import Database, {Database as DatabaseType, RunResult, Statement} from "better-sqlite3";
 import {databaseEmptyResultResponse, databaseEmptyStatementResponse} from "../../../helpers";
 
-export const getProgressItemAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
-    return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
+export const getProgressItemAdapter = async (req: Request): Promise<ResponseObject<ProgressItem>> => {
+    return new Promise<ResponseObject<ProgressItem>>((resolve, reject) => {
 
         const db: DatabaseType = new Database('./progress.db');
 
@@ -14,7 +14,7 @@ export const getProgressItemAdapter = async (req: Request): Promise<ResponseObje
             reject(databaseEmptyStatementResponse)
         }
         try {
-            const result: RunResult = stmt.run(req.params.id);
+            const result: ProgressItem = stmt.get(req.params.id) as ProgressItem;
             if (result) {
                 resolve({
                     query: req.query,
@@ -59,15 +59,15 @@ export const createProgressItemAdapter = async (req: Request): Promise<ResponseO
         }
     });
 }
-export const getAllProgressItemsAdapter = async (req: Request): Promise<ResponseObject<RunResult[]>> => {
-    return new Promise<ResponseObject<RunResult[]>>((resolve, reject) => {
+export const getAllProgressItemsAdapter = async (req: Request): Promise<ResponseObject<ProgressItem[]>> => {
+    return new Promise<ResponseObject<ProgressItem[]>>((resolve, reject) => {
 
         const db: DatabaseType = new Database('./progress.db');
 
         const stmt: Statement = db.prepare(`SELECT * FROM progress`);
 
         try {
-            const results: RunResult[] = stmt.all();
+            const results: ProgressItem[] = stmt.all() as ProgressItem[];
             if (results) {
                 resolve({
                     query: "/progress/all",
@@ -79,7 +79,7 @@ export const getAllProgressItemsAdapter = async (req: Request): Promise<Response
                     }
                 })
             } else {
-
+                reject(databaseEmptyResultResponse)
             }
         } catch (err) {
             reject(err);

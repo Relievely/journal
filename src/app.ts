@@ -1,9 +1,9 @@
 import {routes} from "./routes";
 import * as dotenv from "dotenv";
 
-const express = require("express");
+import express, {Express} from "express";
 
-export const app = express();
+export const app: Express = express();
 
 const config = dotenv.config({path: '.env'});
 

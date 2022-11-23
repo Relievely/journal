@@ -1,31 +1,28 @@
 import {Request} from "express";
-import {ResponseObject} from "./interfaces";
+import {ResponseError} from "./interfaces";
 
-export const parameterErrorResponse = (req: Request): ResponseObject => ({
+export const parameterErrorResponse = (req: Request): ResponseError => ({
     query: req.url,
     params: req.params,
     sender: "Service",
-    body: {
-        length: 4,
-        data: {"error": "Didn't provided necessary parameters"}
-    },
+    error: new Error("Didn't provided necessary parameters")
 })
 
-export const databaseEmptyStatementResponse = (req: Request): ResponseObject => ({
+export const databaseEmptyStatementResponse = (req: Request): ResponseError => ({
     query: req.query,
     params: req.params,
     sender: "Service",
     error: new Error("Error with empty statement after query!")
 })
 
-export const databaseEmptyResultResponse = (req: Request): ResponseObject => ({
+export const databaseEmptyResultResponse = (req: Request): ResponseError => ({
     query: req.query,
     params: req.params,
     sender: "Service",
     error: new Error("Error with empty result after running statement!")
 })
 
-export const databaseCreateErrorResponse = (req: Request): ResponseObject => ({
+export const databaseCreateErrorResponse = (req: Request): ResponseError => ({
     query: req.query,
     params: req.params,
     sender: "Service",

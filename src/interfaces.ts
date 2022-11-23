@@ -1,5 +1,4 @@
 import {ParamsDictionary} from "express-serve-static-core";
-import {RunResult} from "better-sqlite3";
 import {MoodType} from "./enums";
 
 export interface ResponseObject<T> {
@@ -12,6 +11,14 @@ export interface ResponseObject<T> {
         data: T
     },
     error?: Error
+}
+
+export interface ResponseError {
+    query: string | any
+    params: string[] | ParamsDictionary
+    sender: string | number
+    status?: string
+    error: Error
 }
 
 export interface ProgressItem {

@@ -2,7 +2,7 @@ import supertest, {Response} from "supertest";
 import {app} from '../app';
 
 import {describe, it, expect} from '@jest/globals';
-import {ResponseObject} from "../interfaces";
+import {NoteItem, ResponseObject} from "../interfaces";
 
 describe("Note routes", () => {
     const requestWithSuperTest = supertest(app);
@@ -14,7 +14,7 @@ describe("Note routes", () => {
             .expect('Content-Type', /json/)
             .then((response: Response) => {
                 expect(response).toBeDefined();
-                expect((response.body as ResponseObject).body).toBeDefined();
+                expect((response.body as ResponseObject<NoteItem>).body).toBeDefined();
             });
     });
 });

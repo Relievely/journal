@@ -4,6 +4,7 @@ import {logger} from "./middleware/logger";
 import {progress} from "./routes/progress";
 import {note} from "./routes/note";
 import {creation} from "./routes/creation";
+import pino_http from "pino-http";
 
 export const routes = (app: Express) => {
     app.use(cors({
@@ -13,6 +14,7 @@ export const routes = (app: Express) => {
         "optionsSuccessStatus": 204
     }));
 
+    app.use(pino_http());
     app.use(creation);
     app.use("/progress", progress);
     app.use("/note", note);

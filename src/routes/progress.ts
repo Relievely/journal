@@ -9,5 +9,5 @@ export const progress = Router();
 
 progress
     .get("/", getAllProgressItemsController)
-    .get("/:id", getProgressItemController)
     .post("/", insertProgressItemController)
+    .get("/:id", getProgressItemController)
