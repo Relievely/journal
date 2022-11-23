@@ -13,7 +13,7 @@ export const createTablesAdapter = async (req: Request): Promise<ResponseObject>
                                                 (
                                                     id       INTEGER                                             NOT NULL
                                                         PRIMARY KEY AUTOINCREMENT,
-                                                    date     INTEGER                                                NOT NULL,
+                                                    creationDate     INTEGER                                                NOT NULL,
                                                     mood TEXT CHECK ( mood IN ('Very Bad', 'Bad', 'Medium', 'Good', 'Very Good') ) NOT NULL
                                                 );`);
 
@@ -64,6 +64,30 @@ export const getAllProgressItemsAdapter = async (req: Request): Promise<Response
                 body: {
                     length: results?.length ?? 0,
                     data: results
+                }
+            })
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
+
+export const createProgressItemAdapter = async (req: Request): Promise<ResponseObject> => {
+    return new Promise<ResponseObject>((resolve, reject) => {
+
+        const db: DatabaseType = new Database('./progress.db');
+
+        const stmt = db.prepare(`INSERT INTO progress (creationDate, mood) VALUES(1, 'Good'),(2, 'Very Bad')`);
+
+        try {
+            const result: RunResult = stmt.run();
+            resolve({
+                query: "/progress",
+                params: req.params,
+                sender: "",
+                body: {
+                    length: 1,
+                    data: result
                 }
             })
         } catch (err) {
