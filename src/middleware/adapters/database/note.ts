@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {NoteItem, ResponseObject} from "../../../interfaces";
-import Database, {Database as DatabaseType} from "better-sqlite3";
+import Database, {Database as DatabaseType, RunResult} from "better-sqlite3";
 
 export const getAllNoteItemsAdapter = async (req: Request): Promise<ResponseObject<NoteItem[]>> => {
     return new Promise<ResponseObject<NoteItem[]>>((resolve, reject) => {
@@ -24,4 +24,16 @@ export const getAllNoteItemsAdapter = async (req: Request): Promise<ResponseObje
             reject(err);
         }
     });
+}
+
+export const getNoteItemAdapter = async (req: Request) => {
+
+}
+
+export const addNoteItemAdapter = async (req: Request) => {
+
+}
+
+export const deleteNoteItemAdapter = async (req: Request) => {
+
 }
