@@ -1,16 +1,23 @@
 import {ParamsDictionary} from "express-serve-static-core";
 import {MoodType} from "./enums";
+import QueryString from "qs";
+import {MediaType} from "express";
+
+type ReqBody = any;
 
 export interface ResponseObject<T> {
-    query: string | any
-    params: string[] | ParamsDictionary
-    sender: string | number
+    url: string,
+    route: any,
+    query: QueryString.ParsedQs,
+    params: ParamsDictionary,
+    body: ReqBody,
+    accepted: MediaType[],
     status?: string
-    body?: {
+    data?: {
         length: number
-        data: T
+        value: T
     },
-    error?: Error
+    error?: string
 }
 
 export interface ResponseError {
@@ -18,17 +25,17 @@ export interface ResponseError {
     params: string[] | ParamsDictionary
     sender: string | number
     status?: string
-    error: Error
+    error: string
 }
 
 export interface ProgressItem {
-    id: number,
+    id?: number,
     creationDate: number,
     mood: MoodType
 }
 
 export interface NoteItem {
-    id: number,
+    id?: number,
     content: string,
     progressID: number
 }

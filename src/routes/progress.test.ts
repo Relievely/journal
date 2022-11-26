@@ -25,8 +25,8 @@ describe("Progress routes", () => {
             .expect('Content-Type', /json/)
             .then((response: Response) => {
                 expect(response).toBeDefined();
-                expect((response.body as ResponseObject<ProgressItem>).body).toBeDefined();
-                expect((response.body as ResponseObject<ProgressItem>).body.data.id).toBeDefined();
+                expect((response.body as ResponseObject<ProgressItem>).data).toBeDefined();
+                expect((response.body as ResponseObject<ProgressItem>).data.value.id).toBeDefined();
             });
     });
 });

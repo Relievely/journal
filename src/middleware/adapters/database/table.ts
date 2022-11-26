@@ -1,7 +1,7 @@
 import {Request} from "express";
 import {ResponseObject} from "../../../interfaces";
 import Database, {Database as DatabaseType, RunResult} from "better-sqlite3";
-import {databaseCreateErrorResponse} from "../../../helpers";
+import {databaseCreateErrorResponse, responseObjectItems} from "../../../helpers";
 
 export const createTablesAdapter = async (req: Request): Promise<ResponseObject<RunResult[]>> => {
     return new Promise<ResponseObject<RunResult[]>>((resolve, reject) => {
@@ -22,7 +22,8 @@ export const createTablesAdapter = async (req: Request): Promise<ResponseObject<
                                              (
                                                  id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                                                  content    TEXT    NOT NULL,
-                                                 progressID INTEGER NOT NULL
+                                                 progressID INTEGER NOT NULL,
+                                                 FOREIGN KEY(progressID) REFERENCES progress(id)
                                              )
         `)
 
@@ -33,28 +34,20 @@ export const createTablesAdapter = async (req: Request): Promise<ResponseObject<
                     endResult.push(cResult)
                 } else {
                     db.close();
-                    reject(databaseCreateErrorResponse(req));
+                    reject(databaseCreateErrorResponse);
                 }
                 const dResult: RunResult = createNotesTable.run();
                 if (dResult) {
                     endResult.push(dResult);
                 } else {
                     db.close();
-                    reject(databaseCreateErrorResponse(req));
+                    reject(databaseCreateErrorResponse);
                 }
             })();
 
             db.close();
 
-            resolve({
-                query: "/create",
-                params: req.params,
-                sender: "",
-                body: {
-                    length: endResult?.length ?? 0,
-                    data: endResult
-                }
-            })
+            resolve(responseObjectItems<RunResult>(req, endResult))
         } catch (err) {
             reject(err);
         }

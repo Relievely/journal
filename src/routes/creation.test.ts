@@ -6,7 +6,7 @@ import {describe, it, expect} from '@jest/globals';
 describe("Creation routes", () => {
     const requestWithSuperTest = supertest(app);
 
-    it("should return a 200 response", async () => {
+    it("should create all tables", async () => {
         await requestWithSuperTest
             .get("/create")
             .expect(200)

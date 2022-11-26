@@ -6,6 +6,7 @@ import {
     getProgressItemAdapter
 } from "../adapters/database/progess";
 import {RunResult} from "better-sqlite3";
+import {responseError} from "../../helpers";
 
 export const getProgressItemController = (req: Request, res: Response<ResponseObject<ProgressItem>>): void => {
     getProgressItemAdapter(req)
@@ -13,12 +14,7 @@ export const getProgressItemController = (req: Request, res: Response<ResponseOb
             res.status(200).json(response);
         })
         .catch((err: Error) => {
-            res.status(500).json({
-                query: req.query,
-                params: [],
-                sender: "",
-                error: err
-            });
+            res.status(500).json(responseError(req, err.message));
         })
 }
 
@@ -28,12 +24,7 @@ export const getAllProgressItemsController = (req: Request, res: Response<Respon
             res.status(200).json(response);
         })
         .catch((err: Error) => {
-            res.status(500).json({
-                query: req.query,
-                params: [],
-                sender: "",
-                error: err
-            });
+            res.status(500).json(responseError(req, err.message));
         })
 }
 
@@ -43,11 +34,6 @@ export const insertProgressItemController = (req: Request, res: Response<Respons
             res.status(200).json(response);
         })
         .catch((err: Error) => {
-            res.status(500).json({
-                query: req.query,
-                params: [],
-                sender: "",
-                error: err
-            });
+            res.status(500).json(responseError(req, err.message));
         })
 }
