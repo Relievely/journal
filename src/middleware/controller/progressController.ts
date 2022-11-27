@@ -1,9 +1,9 @@
 import {Request, Response} from "express";
 import {ProgressItem, ResponseObject} from "../../interfaces";
 import {
-    createProgressItemAdapter,
+    createProgressItemAdapter, deleteProgressItemAdapter,
     getAllProgressItemsAdapter,
-    getProgressItemAdapter
+    getProgressItemAdapter, updateProgressItemCreationAdapter, updateProgressItemMoodAdapter
 } from "../adapters/database/progess";
 import {RunResult} from "better-sqlite3";
 import {responseError} from "../../helpers";
@@ -36,4 +36,22 @@ export const insertProgressItemController = (req: Request, res: Response<Respons
         .catch((err: Error) => {
             res.status(500).json(responseError(req, err.message));
         })
+}
+
+export const updateProgressItemMoodController = (req: Request, res: Response<ResponseObject<RunResult>>): void => {
+    updateProgressItemMoodAdapter(req)
+        .then((response: ResponseObject<RunResult>) => res.status(200).json(response))
+        .catch((err: Error) => res.status(500).json(responseError(req, err.message)))
+}
+
+export const updateProgressItemDateController = (req: Request, res: Response<ResponseObject<RunResult>>): void => {
+    updateProgressItemCreationAdapter(req)
+        .then((response: ResponseObject<RunResult>) => res.status(200).json(response))
+        .catch((err: Error) => res.status(500).json(responseError(req, err.message)))
+}
+
+export const deleteProgressItemController = (req: Request, res: Response<ResponseObject<RunResult>>): void => {
+    deleteProgressItemAdapter(req)
+        .then((response: ResponseObject<RunResult>) => res.status(200).json(response))
+        .catch((err: Error) => res.status(500).json(responseError(req, err.message)))
 }

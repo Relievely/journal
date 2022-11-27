@@ -2,10 +2,11 @@ import {Request} from "express";
 import {ProgressItem, ResponseObject} from "../../../interfaces";
 import Database, {Database as DatabaseType, RunResult, Statement} from "better-sqlite3";
 import {
+    emptyItemResponse,
     emptyResultResponse,
     emptyStatementResponse,
     responseObjectItem,
-    responseObjectItems
+    responseObjectItems, serviceDB
 } from "../../../helpers";
 
 export const getProgressItemAdapter = async (req: Request): Promise<ResponseObject<ProgressItem>> => {
@@ -15,7 +16,7 @@ export const getProgressItemAdapter = async (req: Request): Promise<ResponseObje
 
         const stmt: Statement = db.prepare(`SELECT * FROM progress WHERE id = ?`);
 
-        if(!stmt) {
+        if (!stmt) {
             reject(emptyStatementResponse)
         }
         try {
@@ -65,6 +66,61 @@ export const createProgressItemAdapter = async (req: Request): Promise<ResponseO
             resolve(responseObjectItem<RunResult>(req, result))
         } catch (err) {
             reject(err);
+        }
+    });
+}
+
+export const updateProgressItemCreationAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
+    return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
+        const stmt = serviceDB.prepare<[number, number]>(`UPDATE progress SET creationDate = ? WHERE id = ?`);
+        if (!stmt) {
+            reject(emptyStatementResponse);
+        }
+
+        const item: ProgressItem = req.body as ProgressItem;
+        if (!item) {
+            reject(emptyItemResponse);
+        }
+        const result: RunResult = stmt.run(Number(item.creationDate), item.id);
+        if (result) {
+            resolve(responseObjectItem<RunResult>(req, result))
+        } else {
+            reject(emptyResultResponse)
+        }
+    });
+}
+
+export const updateProgressItemMoodAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
+    return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
+        const stmt = serviceDB.prepare<[string, number]>(`UPDATE progress SET mood = ? WHERE id = ?`);
+        if (!stmt) {
+            reject(emptyStatementResponse);
+        }
+
+        const item: ProgressItem = req.body as ProgressItem;
+        if (!item) {
+            reject(emptyItemResponse);
+        }
+        const result: RunResult = stmt.run(item.mood, item.id);
+        if (result) {
+            resolve(responseObjectItem<RunResult>(req, result))
+        } else {
+            reject(emptyResultResponse)
+        }
+    });
+}
+
+export const deleteProgressItemAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
+    return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
+        const stmt = serviceDB.prepare<string>(`DELETE FROM progress WHERE id = ?`);
+        if (!stmt) {
+            reject(emptyStatementResponse);
+        }
+        const result: RunResult = stmt.run(req.params.id);
+        if (result) {
+            resolve(responseObjectItem<RunResult>(req, result))
+        } else {
+            reject(emptyResultResponse)
         }
     });
 }
