@@ -1,9 +1,20 @@
 import supertest, {Response} from "supertest";
 import {app} from '../app';
 
-import {describe, it, expect} from '@jest/globals';
-import {ProgressItem, ResponseObject} from "../interfaces";
+import {describe, it, expect, beforeAll} from '@jest/globals';
+import {NoteItem, ProgressItem, ResponseObject} from "../interfaces";
 import {RunResult} from "better-sqlite3";
+
+beforeAll(async () => {
+    await supertest(app)
+        .get("/create")
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((response: Response) => {
+            expect((response.body as ResponseObject<NoteItem>).data.length).toBeGreaterThanOrEqual(0);
+            expect((response.body as ResponseObject<NoteItem>).data.length).toBeLessThanOrEqual(1);
+        });
+})
 
 describe("Progress routes", () => {
     const requestWithSuperTest = supertest(app);

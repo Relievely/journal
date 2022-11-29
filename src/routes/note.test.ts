@@ -1,9 +1,20 @@
 import supertest, {Response} from "supertest";
 import {app} from '../app';
 
-import {describe, it, expect} from '@jest/globals';
+import {describe, it, expect, beforeAll} from '@jest/globals';
 import {NoteItem, ResponseObject} from "../interfaces";
 import {RunResult} from "better-sqlite3";
+
+beforeAll(async () => {
+    await supertest(app)
+        .get("/create")
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((response: Response) => {
+            expect((response.body as ResponseObject<NoteItem>).data.length).toBeGreaterThanOrEqual(0);
+            expect((response.body as ResponseObject<NoteItem>).data.length).toBeLessThanOrEqual(1);
+        });
+})
 
 describe("Note routes", () => {
     const requestWithSuperTest = supertest(app);
@@ -11,7 +22,7 @@ describe("Note routes", () => {
     describe("should handle item", () => {
         let newID: number | bigint = 0;
 
-        it("should create new note item", async () => {
+        it("should create new progress item", async () => {
             await requestWithSuperTest
                 .post("/progress")
                 .send({creationDate: 33570923, mood: "Bad"})
@@ -44,7 +55,6 @@ describe("Note routes", () => {
                         })
                 })
         })
-
 
         it(`should update item`, async () => {
             await requestWithSuperTest
