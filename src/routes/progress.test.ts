@@ -12,7 +12,7 @@ beforeAll(async () => {
         .expect('Content-Type', /json/)
         .then((response: Response) => {
             expect((response.body as ResponseObject<NoteItem>).data.length).toBeGreaterThanOrEqual(0);
-            expect((response.body as ResponseObject<NoteItem>).data.length).toBeLessThanOrEqual(1);
+            expect((response.body as ResponseObject<NoteItem>).data.length).toBeLessThanOrEqual(2);
         });
 })
 
