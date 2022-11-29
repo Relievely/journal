@@ -5,7 +5,7 @@ import {
     emptyResultResponse,
     emptyStatementResponse, emptyItemResponse,
     responseObjectItem,
-    responseObjectItems, serviceDB
+    responseObjectItems, serviceDB, parametersIncluded, insufficientParametersError
 } from "../../../helpers";
 
 export const getAllNoteItemsAdapter = async (req: Request): Promise<ResponseObject<NoteItem[]>> => {
@@ -39,7 +39,7 @@ export const getNoteItemAdapter = async (req: Request): Promise<ResponseObject<N
 
 export const createNoteItemAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
     return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
-        const stmt = serviceDB.prepare<[string, number]>(`INSERT INTO note (content, progressID) VALUES (?, ?)`);
+        const stmt: Statement<[string, number]> = serviceDB.prepare<[string, number]>(`INSERT INTO note (content, progressID) VALUES (?, ?)`);
         if (!stmt) {
             reject(emptyStatementResponse);
         }
@@ -59,12 +59,12 @@ export const createNoteItemAdapter = async (req: Request): Promise<ResponseObjec
 
 export const updateNoteItemAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
     return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
-        const stmt = serviceDB.prepare<[string, number]>(`UPDATE note SET content = ? WHERE id = ?`);
+        const stmt: Statement<[string, number]> = serviceDB.prepare<[string, number]>(`UPDATE note SET content = ? WHERE id = ?`);
         if (!stmt) {
             reject(emptyStatementResponse);
         }
 
-        const item: NoteItem = req.body as NoteItem;
+        const item: NoteItem = {...req.body, ...req.params} as NoteItem;
         if (!item) {
             reject(emptyItemResponse);
         }
@@ -79,9 +79,12 @@ export const updateNoteItemAdapter = async (req: Request): Promise<ResponseObjec
 
 export const deleteNoteItemAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
     return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
-        const stmt = serviceDB.prepare<string>(`DELETE FROM note WHERE id = ?`);
+        const stmt: Statement<string> = serviceDB.prepare<string>(`DELETE FROM note WHERE id = ?`);
         if (!stmt) {
             reject(emptyStatementResponse);
+        }
+        if (!parametersIncluded<string>(req, "id")) {
+            reject(insufficientParametersError)
         }
         const result: RunResult = stmt.run(req.params.id);
         if (result) {

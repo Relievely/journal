@@ -29,7 +29,6 @@ export const getNoteItemController = (req: Request, res: Response<ResponseObject
             res.status(200).json(response);
         })
         .catch((err: Error) => {
-            logger.error(`Error while getting note: ${err.message}`);
             res.status(500).json(responseError(req, err.message));
         })
 }

@@ -53,4 +53,10 @@ export const emptyItemResponse = new Error("Error white empty item before insert
 
 export const databaseCreateErrorResponse = "Error while creating table in database"
 
+export const insufficientParametersError = () => new Error("Error while checking validity of parameters");
+
 export const serviceDB = new Database('./progress.db');
+
+export const parametersIncluded = <T>(req: Request, ...params: T[]) => {
+    return !params.find((p: T) => req.params[p.toString()] === undefined);
+}

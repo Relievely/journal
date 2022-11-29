@@ -8,51 +8,48 @@ import {RunResult} from "better-sqlite3";
 describe("Note routes", () => {
     const requestWithSuperTest = supertest(app);
 
-    describe("multiple", () => {
-        it("should return all note items", async () => {
-            await requestWithSuperTest
-                .get("/note/")
-                .expect(200)
-                .expect('Content-Type', /json/)
-                .then((response: Response) => {
-                    expect((response.body as ResponseObject<NoteItem>).data.length).toBeGreaterThanOrEqual(0);
-                });
-        });
-    })
-
     describe("should handle item", () => {
         let newID: number | bigint = 0;
 
         it("should create new note item", async () => {
             await requestWithSuperTest
-                .post("/note")
-                .send({content: "Placeholder", progressID: 0})
+                .post("/progress")
+                .send({creationDate: 33570923, mood: "Bad"})
                 .expect(200)
                 .expect('Content-Type', /json/)
-                .then((response: Response) => {
-                    expect((response.body as ResponseObject<RunResult>).data.value.changes).toBe(1);
-                    newID = (response.body as ResponseObject<RunResult>).data.value.lastInsertRowid;
+                .then(async (response: Response) => {
+                    const progressValue = (response.body as ResponseObject<RunResult>).data.value;
+                    expect(progressValue.changes).toBe(1);
+                    const progressID: number | bigint = progressValue.lastInsertRowid;
+                    expect(progressID).toBeGreaterThanOrEqual(0);
+
+                    await requestWithSuperTest
+                        .post("/note")
+                        .send({content: "Placeholder", progressID})
+                        .expect(200)
+                        .expect('Content-Type', /json/)
+                        .then(async (noteResponse: Response) => {
+                            const responseValue = (noteResponse.body as ResponseObject<RunResult>).data.value;
+                            expect(responseValue.changes).toBe(1);
+                            newID = responseValue.lastInsertRowid;
+
+                            expect(newID).toBeGreaterThan(0);
+                            await requestWithSuperTest
+                                .get(`/note/${newID}`)
+                                .expect(200)
+                                .expect('Content-Type', /json/)
+                                .then((getResponse: Response) => {
+                                    expect((getResponse.body as ResponseObject<NoteItem>).data.value.id).toBe(newID);
+                                })
+                        })
                 })
         })
 
-        it(`should return note item with id`, async () => {
-            expect(newID).toBeGreaterThan(0);
-            await requestWithSuperTest
-                .get(`/note/${newID}`)
-                .expect(200)
-                .expect('Content-Type', /json/)
-                .then((response: Response) => {
-                    expect(response).toBeDefined();
-                    expect((response.body as ResponseObject<NoteItem>).data).toBeDefined();
-                    expect((response.body as ResponseObject<NoteItem>).data.value).toBeDefined();
-                    expect((response.body as ResponseObject<NoteItem>).data.value.id).toBe(newID);
-                })
-        });
 
         it(`should update item`, async () => {
             await requestWithSuperTest
-                .patch(`/note`)
-                .send({content: "NewPlaceholder", id: newID})
+                .patch(`/note/${newID}`)
+                .send({content: "NewPlaceholder"})
                 .expect(200)
                 .expect('Content-Type', /json/)
                 .then(async (response: Response) => {
@@ -77,12 +74,18 @@ describe("Note routes", () => {
                     await requestWithSuperTest
                         .get(`/note/${newID}`)
                         .expect(500)
-                        .expect('Content-Type', /json/)
-                        .then((afterDelResponse: Response) => {
-                            console.log("Resp: ", afterDelResponse.body);
-                            console.log("NewID: ", newID);
-                        })
+                        .expect('Content-Type', /json/);
                 })
         })
+    });
+
+    it("should return all note items", async () => {
+        await requestWithSuperTest
+            .get("/note")
+            .expect(200)
+            .expect('Content-Type', /json/)
+            .then((response: Response) => {
+                expect((response.body as ResponseObject<NoteItem>).data.length).toBeGreaterThanOrEqual(0);
+            });
     });
 });
