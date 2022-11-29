@@ -55,9 +55,7 @@ export const getAllProgressItemsAdapter = async (req: Request): Promise<Response
 export const getGraphProgressItemsAdapter = async (req: Request): Promise<ResponseObject<ProgressItem[]>> => {
     return new Promise<ResponseObject<ProgressItem[]>>((resolve, reject) => {
 
-        const db: DatabaseType = new Database('./progress.db');
-
-        const stmt: Statement = db.prepare(`SELECT creationDate, mood
+        const stmt: Statement = serviceDB.prepare(`SELECT creationDate, mood
                                             FROM progress
                                             ORDER BY creationDate DESC LIMIT 14`);
 
