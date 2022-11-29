@@ -2,6 +2,7 @@ import {Request} from "express";
 import {ProgressItem, ResponseObject} from "../../../interfaces";
 import Database, {Database as DatabaseType, RunResult, Statement} from "better-sqlite3";
 import {
+    databaseCreateErrorResponse,
     emptyItemResponse,
     emptyResultResponse,
     emptyStatementResponse,
@@ -57,15 +58,24 @@ export const createProgressItemAdapter = async (req: Request): Promise<ResponseO
 
         const db: DatabaseType = new Database('./progress.db');
 
-        const stmt = db.prepare(`INSERT INTO progress (creationDate, mood)
-                                 VALUES (1, 'Good'),
-                                        (2, 'Very Bad')`);
+        let creationDate = Date.now();
 
-        try {
-            const result: RunResult = stmt.run();
+        if(req.body.creationDate) {
+            creationDate = req.body.creationDate;
+        }
+        const mood: string = req.body.mood;
+
+        const stmt: Statement<[number, string]> = db.prepare(`INSERT INTO progress (creationDate, mood) VALUES (?, ?)`);
+
+        if(!stmt) {
+            reject(emptyStatementResponse);
+        }
+
+        const result: RunResult = stmt.run(creationDate, mood);
+        if (result) {
             resolve(responseObjectItem<RunResult>(req, result))
-        } catch (err) {
-            reject(err);
+        } else {
+            reject(emptyResultResponse);
         }
     });
 }
