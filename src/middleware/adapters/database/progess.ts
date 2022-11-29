@@ -75,12 +75,14 @@ export const getGraphProgressItemsAdapter = async (req: Request): Promise<Respon
 export const createProgressItemAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
     return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
 
-        let creationDate = Date.now();
+        const item: ProgressItem = req.body as ProgressItem
 
-        if (req.body.creationDate) {
-            creationDate = req.body.creationDate;
+        let creationDate: number = Date.now();
+
+        if (item.creationDate) {
+            creationDate = Number(item.creationDate);
         }
-        const mood: string = req.body.mood;
+        const mood: string = item.mood;
 
         const stmt: Statement<[number, string]> = serviceDB.prepare(`INSERT INTO progress (creationDate, mood) VALUES (?, ?)`);
 
