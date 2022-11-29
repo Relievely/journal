@@ -52,6 +52,28 @@ export const getAllProgressItemsAdapter = async (req: Request): Promise<Response
     });
 }
 
+export const getGraphProgressItemsAdapter = async (req: Request): Promise<ResponseObject<ProgressItem[]>> => {
+    return new Promise<ResponseObject<ProgressItem[]>>((resolve, reject) => {
+
+        const db: DatabaseType = new Database('./progress.db');
+
+        const stmt: Statement = db.prepare(`SELECT creationDate, mood
+                                            FROM progress
+                                            ORDER BY creationDate DESC LIMIT 14`);
+
+        try {
+            const results: ProgressItem[] = stmt.all() as ProgressItem[];
+            if (results) {
+                resolve(responseObjectItems<ProgressItem>(req, results))
+            } else {
+                reject(emptyResultResponse)
+            }
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
+
 export const createProgressItemAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
     return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
 

@@ -18,6 +18,17 @@ describe("Progress routes", () => {
             });
     });
 
+    it("should return Graph progress items", async () => {
+        await requestWithSuperTest
+            .get("/progress/graph")
+            .expect(200)
+            .expect('Content-Type', /json/)
+            .then((response: Response) => {
+                expect(response).toBeDefined();
+                expect((response.body as ResponseObject<ProgressItem>).body).toBeDefined();
+            });
+    });
+
     it("should return the project object with the id 1", async () => {
         await requestWithSuperTest
             .get("/progress/1")
