@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {ProgressItem, ResponseObject} from "../../../interfaces";
-import Database, {Database as DatabaseType, RunResult, Statement} from "better-sqlite3";
+import {RunResult, Statement} from "better-sqlite3";
 import {
     emptyItemResponse,
     emptyResultResponse,
@@ -12,9 +12,8 @@ import {
 export const getProgressItemAdapter = async (req: Request): Promise<ResponseObject<ProgressItem>> => {
     return new Promise<ResponseObject<ProgressItem>>((resolve, reject) => {
 
-        const db: DatabaseType = new Database('./progress.db');
 
-        const stmt: Statement = db.prepare(`SELECT * FROM progress WHERE id = ?`);
+        const stmt: Statement = serviceDB.prepare(`SELECT * FROM progress WHERE id = ?`);
 
         if (!stmt) {
             reject(emptyStatementResponse)
@@ -34,10 +33,11 @@ export const getProgressItemAdapter = async (req: Request): Promise<ResponseObje
 
 export const getAllProgressItemsAdapter = async (req: Request): Promise<ResponseObject<ProgressItem[]>> => {
     return new Promise<ResponseObject<ProgressItem[]>>((resolve, reject) => {
+        const stmt: Statement = serviceDB.prepare(`SELECT * FROM progress`);
 
-        const db: DatabaseType = new Database('./progress.db');
-
-        const stmt: Statement = db.prepare(`SELECT * FROM progress`);
+        if (!stmt) {
+            reject(emptyStatementResponse);
+        }
 
         try {
             const results: ProgressItem[] = stmt.all() as ProgressItem[];
@@ -77,17 +77,24 @@ export const getGraphProgressItemsAdapter = async (req: Request): Promise<Respon
 export const createProgressItemAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
     return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
 
-        const db: DatabaseType = new Database('./progress.db');
+        let creationDate = Date.now();
 
-        const stmt = db.prepare(`INSERT INTO progress (creationDate, mood)
-                                 VALUES (1, 'Good'),
-                                        (2, 'Very Bad')`);
+        if (req.body.creationDate) {
+            creationDate = req.body.creationDate;
+        }
+        const mood: string = req.body.mood;
 
-        try {
-            const result: RunResult = stmt.run();
+        const stmt: Statement<[number, string]> = serviceDB.prepare(`INSERT INTO progress (creationDate, mood) VALUES (?, ?)`);
+
+        if (!stmt) {
+            reject(emptyStatementResponse);
+        }
+
+        const result: RunResult = stmt.run(creationDate, mood);
+        if (result) {
             resolve(responseObjectItem<RunResult>(req, result))
-        } catch (err) {
-            reject(err);
+        } else {
+            reject(emptyResultResponse);
         }
     });
 }
