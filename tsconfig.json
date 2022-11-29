@@ -8,9 +8,9 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "sourceMap": true,
-    "outDir": "dist",
-    "sourceRoot": "src",
-    "baseUrl": "./src-old",
+    "outDir": "./dist",
+    "sourceRoot": "./src",
+    "baseUrl": "./src",
     "paths": {
       "*": [
         "node_modules/*"
