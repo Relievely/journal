@@ -13,6 +13,7 @@ progress
     .get("/", getAllProgressItemsController)
     .post("/", insertProgressItemController)
     .get("/graph", getGraphProgressItemsController)
+    .get("/graph/:id", getGraphProgressItemsController)
     .get("/:id", getProgressItemController)
     .patch("/:id/mood", updateProgressItemMoodController)
     .patch("/:id/date", updateProgressItemDateController)

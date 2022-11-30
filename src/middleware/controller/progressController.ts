@@ -7,26 +7,24 @@ import {
     getProgressItemAdapter, updateProgressItemCreationAdapter, updateProgressItemMoodAdapter
 } from "../adapters/database/progess";
 import {RunResult} from "better-sqlite3";
-import {responseError} from "../../helpers";
+import {emptyResultResponse, responseError} from "../../helpers";
 
 export const getProgressItemController = (req: Request, res: Response<ResponseObject<ProgressItem>>): void => {
     getProgressItemAdapter(req)
-        .then((response: ResponseObject<ProgressItem>) => {
-            res.status(200).json(response);
-        })
+        .then((response: ResponseObject<ProgressItem>) => res.status(200).json(response))
         .catch((err: Error) => {
-            res.status(500).json(responseError(req, err.message));
+            if (err === emptyResultResponse) {
+                res.status(404).json(responseError(req, err.message));
+            } else {
+                res.status(500).json(responseError(req, err.message));
+            }
         })
 }
 
 export const getAllProgressItemsController = (req: Request, res: Response<ResponseObject<ProgressItem[]>>): void => {
     getAllProgressItemsAdapter(req)
-        .then((response: ResponseObject<ProgressItem[]>) => {
-            res.status(200).json(response);
-        })
-        .catch((err: Error) => {
-            res.status(500).json(responseError(req, err.message));
-        })
+        .then((response: ResponseObject<ProgressItem[]>) => res.status(200).json(response))
+        .catch((err: Error) => res.status(500).json(responseError(req, err.message)))
 }
 
 export const getGraphProgressItemsController = (req: Request, res: Response<ResponseObject<ProgressItem[]>>): void => {
@@ -40,12 +38,8 @@ export const getGraphProgressItemsController = (req: Request, res: Response<Resp
 }
 export const insertProgressItemController = (req: Request, res: Response<ResponseObject<RunResult>>): void => {
     createProgressItemAdapter(req)
-        .then((response: ResponseObject<RunResult>) => {
-            res.status(200).json(response);
-        })
-        .catch((err: Error) => {
-            res.status(500).json(responseError(req, err.message));
-        })
+        .then((response: ResponseObject<RunResult>) => res.status(200).json(response))
+        .catch((err: Error) => res.status(500).json(responseError(req, err.message)))
 }
 
 export const updateProgressItemMoodController = (req: Request, res: Response<ResponseObject<RunResult>>): void => {
@@ -63,5 +57,11 @@ export const updateProgressItemDateController = (req: Request, res: Response<Res
 export const deleteProgressItemController = (req: Request, res: Response<ResponseObject<RunResult>>): void => {
     deleteProgressItemAdapter(req)
         .then((response: ResponseObject<RunResult>) => res.status(200).json(response))
-        .catch((err: Error) => res.status(500).json(responseError(req, err.message)))
+        .catch((err: Error) => {
+            if (err === emptyResultResponse) {
+                res.status(404).json(responseError(req, err.message));
+            } else {
+                res.status(500).json(responseError(req, err.message));
+            }
+        })
 }

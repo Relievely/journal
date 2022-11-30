@@ -10,7 +10,7 @@ export const note = Router();
 note
     .get("/", getAllNoteItemsController)
     .post("/", createNoteItemController)
-    .patch("/", updateNoteItemController)
+    .patch("/:id", updateNoteItemController)
     .get("/:id", getNoteItemController)
     .delete("/:id", deleteNoteItemController)
 

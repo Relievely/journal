@@ -8,16 +8,11 @@ import {
 } from "../adapters/database/note";
 import {responseError} from "../../helpers";
 
-import pino from "pino";
 import {RunResult} from "better-sqlite3";
-
-const logger = pino()
 
 export const getAllNoteItemsController = (req: Request, res: Response<ResponseObject<NoteItem[]>>): void => {
     getAllNoteItemsAdapter(req)
-        .then((response: ResponseObject<NoteItem[]>) => {
-            res.status(200).json(response);
-        })
+        .then((response: ResponseObject<NoteItem[]>) => res.status(200).json(response))
         .catch((err: Error) => {
             res.status(500).json(responseError(req, err.message));
         })
@@ -29,7 +24,6 @@ export const getNoteItemController = (req: Request, res: Response<ResponseObject
             res.status(200).json(response);
         })
         .catch((err: Error) => {
-            logger.error(`Error while getting note: ${err.message}`);
             res.status(500).json(responseError(req, err.message));
         })
 }
