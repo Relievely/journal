@@ -12,9 +12,8 @@ export const progress = Router();
 progress
     .get("/", getAllProgressItemsController)
     .post("/", insertProgressItemController)
-    .get("/graph", getGraphProgressItemsController)
-    .get("/graph/:id", getGraphProgressItemsController)
     .get("/:id", getProgressItemController)
+    .post("/graph", getGraphProgressItemsController)
     .patch("/:id/mood", updateProgressItemMoodController)
     .patch("/:id/date", updateProgressItemDateController)
     .delete("/:id", deleteProgressItemController)

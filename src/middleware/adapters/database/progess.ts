@@ -52,13 +52,12 @@ export const getAllProgressItemsAdapter = async (req: Request): Promise<Response
     });
 }
 
-let newLIMIT: number | bigint = 14;
 export const getGraphProgressItemsAdapter = async (req: Request): Promise<ResponseObject<ProgressItem[]>> => {
     return new Promise<ResponseObject<ProgressItem[]>>((resolve, reject) => {
 
-        // let newLIMIT: number | bigint;
-        if(req.params.id){
-            newLIMIT = parseInt(req.params.id);
+        let newLIMIT: number | bigint = 14;
+        if(req.body.limit){
+            newLIMIT = parseInt(req.body.limit);
         }
         const stmt: Statement = serviceDB.prepare(` SELECT creationDate, mood 
                                                     FROM progress 

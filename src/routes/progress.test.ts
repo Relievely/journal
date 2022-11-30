@@ -32,7 +32,7 @@ describe("Progress routes", () => {
 
     it("should return Graph progress items", async () => {
         await requestWithSuperTest
-            .get("/progress/graph")
+            .post("/progress/graph")
             .expect(200)
             .expect('Content-Type', /json/)
             .then((response: Response) => {
@@ -46,7 +46,6 @@ describe("should handle item", () => {
     const requestWithSuperTest = supertest(app);
 
     let newID: number | bigint = 0;
-    let newLIMIT: number | bigint = 14;
 
     it("should create new note item", async () => {
         await requestWithSuperTest
@@ -75,16 +74,16 @@ describe("should handle item", () => {
     });
 
     it(`should return Graph progress item with newLIMIT`, async () => {
-        expect(newLIMIT).toBeGreaterThan(0);
         await requestWithSuperTest
-            .get(`/progress/graph/${newLIMIT}`)
+            .post(`/progress/graph`)
+            .send({limit : 3})
             .expect(200)
             .expect('Content-Type', /json/)
             .then((response: Response) => {
                 expect(response).toBeDefined();
                 expect((response.body as ResponseObject<ProgressItem>).data).toBeDefined();
                 expect((response.body as ResponseObject<ProgressItem>).data.value).toBeDefined();
-                newLIMIT = (response.body as ResponseObject<RunResult>).data.length;
+                expect((response.body as ResponseObject<ProgressItem>).data.length).toBe(3);
             })
     });
 
