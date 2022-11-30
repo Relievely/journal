@@ -1,5 +1,5 @@
 import {Request} from "express";
-import {ResponseError, ResponseObject} from "./interfaces";
+import {ResponseObject} from "./interfaces";
 import Database from "better-sqlite3";
 
 export const responseObjectItem = <T>(req: Request, obj: T): ResponseObject<T> => ({
@@ -37,13 +37,6 @@ export const responseError = <T>(req: Request, err: string): ResponseObject<T> =
     accepted: req.accepted,
     error: err
 });
-
-export const parameterErrorResponse = (req: Request): ResponseError => ({
-    query: req.url,
-    params: req.params,
-    sender: "Service",
-    error: "Didn't provided necessary parameters"
-})
 
 export const emptyStatementResponse = new Error("Error with empty statement after query!")
 
