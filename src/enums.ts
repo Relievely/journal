@@ -1,4 +1,5 @@
 export enum MoodType {
+    // noinspection JSUnusedGlobalSymbols
     veryBad = "Very Bad",
     bad = "Bad",
     medium = "Medium",
