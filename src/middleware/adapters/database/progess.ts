@@ -1,6 +1,6 @@
 import {Request} from "express";
 import {ProgressItem, ResponseObject} from "../../../interfaces";
-import Database, {Database as DatabaseType, RunResult, Statement} from "better-sqlite3";
+import {RunResult, Statement} from "better-sqlite3";
 import {
     emptyItemResponse,
     emptyResultResponse,
@@ -12,9 +12,8 @@ import {
 export const getProgressItemAdapter = async (req: Request): Promise<ResponseObject<ProgressItem>> => {
     return new Promise<ResponseObject<ProgressItem>>((resolve, reject) => {
 
-        const db: DatabaseType = new Database('./progress.db');
 
-        const stmt: Statement = db.prepare(`SELECT * FROM progress WHERE id = ?`);
+        const stmt: Statement = serviceDB.prepare(`SELECT * FROM progress WHERE id = ?`);
 
         if (!stmt) {
             reject(emptyStatementResponse)
@@ -34,10 +33,31 @@ export const getProgressItemAdapter = async (req: Request): Promise<ResponseObje
 
 export const getAllProgressItemsAdapter = async (req: Request): Promise<ResponseObject<ProgressItem[]>> => {
     return new Promise<ResponseObject<ProgressItem[]>>((resolve, reject) => {
+        const stmt: Statement = serviceDB.prepare(`SELECT * FROM progress`);
 
-        const db: DatabaseType = new Database('./progress.db');
+        if (!stmt) {
+            reject(emptyStatementResponse);
+        }
 
-        const stmt: Statement = db.prepare(`SELECT * FROM progress`);
+        try {
+            const results: ProgressItem[] = stmt.all() as ProgressItem[];
+            if (results) {
+                resolve(responseObjectItems<ProgressItem>(req, results))
+            } else {
+                reject(emptyResultResponse)
+            }
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
+
+export const getGraphProgressItemsAdapter = async (req: Request): Promise<ResponseObject<ProgressItem[]>> => {
+    return new Promise<ResponseObject<ProgressItem[]>>((resolve, reject) => {
+
+        const stmt: Statement = serviceDB.prepare(`SELECT creationDate, mood
+                                            FROM progress
+                                            ORDER BY creationDate DESC LIMIT 14`);
 
         try {
             const results: ProgressItem[] = stmt.all() as ProgressItem[];
@@ -55,17 +75,26 @@ export const getAllProgressItemsAdapter = async (req: Request): Promise<Response
 export const createProgressItemAdapter = async (req: Request): Promise<ResponseObject<RunResult>> => {
     return new Promise<ResponseObject<RunResult>>((resolve, reject) => {
 
-        const db: DatabaseType = new Database('./progress.db');
+        const item: ProgressItem = req.body as ProgressItem
 
-        const stmt = db.prepare(`INSERT INTO progress (creationDate, mood)
-                                 VALUES (1, 'Good'),
-                                        (2, 'Very Bad')`);
+        let creationDate: number = Date.now();
 
-        try {
-            const result: RunResult = stmt.run();
+        if (item.creationDate) {
+            creationDate = Number(item.creationDate);
+        }
+        const mood: string = item.mood;
+
+        const stmt: Statement<[number, string]> = serviceDB.prepare(`INSERT INTO progress (creationDate, mood) VALUES (?, ?)`);
+
+        if (!stmt) {
+            reject(emptyStatementResponse);
+        }
+
+        const result: RunResult = stmt.run(creationDate, mood);
+        if (result) {
             resolve(responseObjectItem<RunResult>(req, result))
-        } catch (err) {
-            reject(err);
+        } else {
+            reject(emptyResultResponse);
         }
     });
 }
