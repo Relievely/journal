@@ -55,9 +55,13 @@ export const getAllProgressItemsAdapter = async (req: Request): Promise<Response
 export const getGraphProgressItemsAdapter = async (req: Request): Promise<ResponseObject<ProgressItem[]>> => {
     return new Promise<ResponseObject<ProgressItem[]>>((resolve, reject) => {
 
-        const stmt: Statement = serviceDB.prepare(`SELECT creationDate, mood
-                                            FROM progress
-                                            ORDER BY creationDate DESC LIMIT 14`);
+        let newLIMIT: number | bigint = 14;
+        if(req.body.limit){
+            newLIMIT = parseInt(req.body.limit);
+        }
+        const stmt: Statement = serviceDB.prepare(` SELECT creationDate, mood 
+                                                    FROM progress 
+                                                    ORDER BY creationDate DESC LIMIT ${newLIMIT}`);
 
         try {
             const results: ProgressItem[] = stmt.all() as ProgressItem[];

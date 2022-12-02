@@ -32,7 +32,7 @@ describe("Progress routes", () => {
 
     it("should return Graph progress items", async () => {
         await requestWithSuperTest
-            .get("/progress/graph")
+            .post("/progress/graph")
             .expect(200)
             .expect('Content-Type', /json/)
             .then((response: Response) => {
@@ -70,6 +70,20 @@ describe("should handle item", () => {
                 expect((response.body as ResponseObject<ProgressItem>).data).toBeDefined();
                 expect((response.body as ResponseObject<ProgressItem>).data.value).toBeDefined();
                 expect((response.body as ResponseObject<ProgressItem>).data.value.id).toBe(newID);
+            })
+    });
+
+    it(`should return Graph progress item with newLIMIT`, async () => {
+        await requestWithSuperTest
+            .post(`/progress/graph`)
+            .send({limit : 3})
+            .expect(200)
+            .expect('Content-Type', /json/)
+            .then((response: Response) => {
+                expect(response).toBeDefined();
+                expect((response.body as ResponseObject<ProgressItem>).data).toBeDefined();
+                expect((response.body as ResponseObject<ProgressItem>).data.value).toBeDefined();
+                expect((response.body as ResponseObject<ProgressItem>).data.length).toBe(3);
             })
     });
 
