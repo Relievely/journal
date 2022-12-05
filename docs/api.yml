@@ -1,0 +1,124 @@
+openapi: 3.0.3
+
+info:
+  title: App API
+  version: '1.0.0'
+
+servers:
+  - url: 'http://localhost:3000'
+
+# Paths
+paths:
+  /create:
+    post:
+      tags:
+        - creation
+      summary: Create tables
+      operationId: createTablesController
+      responses:
+        '200':
+          description: Tables successfully created
+  /note:
+    post:
+      tags:
+        - note
+      summary: Create a new note item
+      operationId: createNoteItemController
+      responses:
+        '200':
+          description: Note item successfully created
+  /note/{id}:
+    patch:
+      tags:
+        - note
+      summary: Update a note item
+      operationId: updateNoteItemController
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the note item to update
+      responses:
+        '200':
+          description: Note item successfully updated
+    get:
+      tags:
+        - note
+      summary: Get a note item
+      operationId: getNoteItemController
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the note item to retrieve
+      responses:
+        '200':
+          description: Note item successfully retrieved
+    delete:
+      tags:
+        - note
+      summary: Delete a note item
+      operationId: deleteNoteItemController
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the note item to delete
+      responses:
+        '200':
+          description: Note item successfully deleted
+  /progress:
+    post:
+      tags:
+        - progress
+      summary: Create a new progress item
+      operationId: insertProgressItemController
+      responses:
+        '200':
+          description: Progress item successfully created
+  /progress/{id}:
+    get:
+      tags:
+        - progress
+      summary: Get a progress item
+      operationId: getProgressItemController
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the progress item to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Progress item successfully retrieved
+    patch:
+      tags:
+        - progress
+      summary: Update a progress item mood
+      operationId: updateProgressItemMoodController
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the progress item to update
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Progress item mood successfully updated
+    delete:
+      tags:
+        - progress
+      summary: Delete a progress item
+      operationId: deleteProgressItemController
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the progress item to delete
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Progress item successfully deleted
