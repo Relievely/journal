@@ -7,7 +7,7 @@ import {RunResult} from "better-sqlite3";
 
 beforeAll(async () => {
     await supertest(app)
-        .get("/create")
+        .put("/create")
         .expect(200)
         .expect('Content-Type', /json/)
         .then((response: Response) => {
