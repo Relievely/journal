@@ -8,7 +8,7 @@ describe("Creation routes", () => {
 
     it("should create all tables", async () => {
         await requestWithSuperTest
-            .get("/create")
+            .put("/create")
             .expect(200)
             .expect('Content-Type', /json/)
             .then((response: Response) => {

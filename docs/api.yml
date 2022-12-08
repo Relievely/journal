@@ -10,7 +10,7 @@ servers:
 # Paths
 paths:
   /create:
-    post:
+    put:
       tags:
         - creation
       summary: Create tables
@@ -19,11 +19,20 @@ paths:
         '200':
           description: Tables successfully created
   /note:
+    get:
+      tags:
+        - note
+      summary: Retrieves all note entries
+      description: Retrieves all note entries
+      operationId: getAllNoteItems
+      responses:
+        '200':
+          description: Note item successfully created
     post:
       tags:
         - note
       summary: Create a new note item
-      operationId: createNoteItemController
+      operationId: createNotItem
       responses:
         '200':
           description: Note item successfully created
@@ -38,6 +47,9 @@ paths:
           name: id
           required: true
           description: The id of the note item to update
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Note item successfully updated
@@ -51,6 +63,9 @@ paths:
           name: id
           required: true
           description: The id of the note item to retrieve
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Note item successfully retrieved
@@ -64,10 +79,21 @@ paths:
           name: id
           required: true
           description: The id of the note item to delete
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Note item successfully deleted
   /progress:
+    get:
+      tags:
+        - progress
+      summary: Retrieves all progress entries
+      description: Retrieves all progress entries
+      responses:
+        '200':
+          description: Note item successfully created
     post:
       tags:
         - progress
@@ -122,3 +148,54 @@ paths:
       responses:
         '200':
           description: Progress item successfully deleted
+  /progress/graph:
+    post:
+      tags:
+        - progress
+      summary: Gets progress items that we can use in our graph component
+      operationId: getProgressItemsForGraph
+      parameters:
+        - in: query
+          name: limit
+          required: false
+          description: Limit for how many elements we want to get
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Progress item successfully patched
+  /progress/{id}/mood:
+    patch:
+      tags:
+        - progress
+      summary: Patches the mood value of a progress item
+      operationId: patchProgressItemMood
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the note item to patch it
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Progress item successfully patched
+  /progress/{id}/date:
+    patch:
+      tags:
+        - progress
+      summary: Patches the date value of a progress item
+      operationId: patchProgressItemDate
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the note item to patch it
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Progress item successfully patched
