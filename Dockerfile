@@ -2,7 +2,7 @@ FROM node:lts-alpine
 
 LABEL org.opencontainers.image.source="https://github.com/relievely/journal"
 
-ENV PORT=50018
+ENV PORT=3000
 
 RUN mkdir -p /usr/app
 
@@ -16,8 +16,6 @@ RUN npm install
 
 # Bundle app source
 COPY . .
-
-RUN npm run build
 
 EXPOSE 3000
 
