@@ -1,9 +1,7 @@
 import {app} from './app';
 
-import pino from "pino";
-
-const logger = pino()
+import {infoMessage} from "./logger";
 
 const port = process.env.PORT;
 
-app.listen(port, () => logger.info(`Journal service listening on port: ${port}`))
+app.listen(port, () => infoMessage(`Journal service listening on port: ${port}`))
