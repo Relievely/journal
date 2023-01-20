@@ -192,7 +192,7 @@ paths:
         - in: path
           name: id
           required: true
-          description: The id of the note item to patch it
+          description: The id of the note item to patch the item
           schema:
             type: integer
             format: int64
