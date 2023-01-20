@@ -186,7 +186,7 @@ paths:
     patch:
       tags:
         - progress
-      summary: Patches the date value of a progress item
+      summary: Patches the date value of a progress item for a given id
       operationId: patchProgressItemDate
       parameters:
         - in: path
